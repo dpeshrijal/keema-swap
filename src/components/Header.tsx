@@ -48,7 +48,7 @@ const Header: FC = () => {
     <div className="flex justify-between px-8 mt-4">
       <div className="font-bold text-xl">Keema Swap</div>
       <button
-        className="text-xl border rounded-full px-4"
+        className="text-xl border rounded-full px-4 bg-gray-100"
         onClick={handleConnect}
       >
         {connectText}

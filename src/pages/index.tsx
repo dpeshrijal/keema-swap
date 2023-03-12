@@ -1,11 +1,13 @@
-import { Inter } from "next/font/google";
-import styles from "@/styles/Home.module.css";
 import Header from "@/components/Header";
+import Container from "@/components/Container";
 
 export default function Home() {
   return (
-    <div>
+    <div className="flex flex-col h-screen bg-pink-50">
       <Header />
+      <div className="flex items-center justify-center mt-28">
+        <Container />
+      </div>
     </div>
   );
 }
