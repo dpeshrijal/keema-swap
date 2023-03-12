@@ -1,8 +1,11 @@
 import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import Header from "@/components/Header";
 
 export default function Home() {
-  return <div></div>;
+  return (
+    <div>
+      <Header />
+    </div>
+  );
 }
