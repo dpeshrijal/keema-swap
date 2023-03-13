@@ -1,37 +1,47 @@
 import { FC, useState } from "react";
 import * as Select from "@radix-ui/react-select";
+import { I_Token } from "./Container";
 
-const TokenSelector: FC = () => {
+type props = {
+  tokenSelected?: I_Token;
+  onTokenSelect: (value: I_Token) => void;
+};
+
+const TokenSelector: FC<props> = ({ tokenSelected, onTokenSelect }) => {
   const tokens = [
     {
       address: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
       symbol: "WETH",
       logo: "https://assets.coingecko.com/coins/images/2518/thumb/weth.png?1628852295",
+      decimal: 18,
     },
     {
       address: "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
       symbol: "UNI",
       logo: "https://assets.coingecko.com/coins/images/12504/thumb/uniswap-uni.png?1600306604",
+      decimal: 18,
     },
     {
       address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
       symbol: "USDT",
       logo: "https://assets.coingecko.com/coins/images/325/thumb/Tether.png?1668148663",
+      decimal: 6,
     },
   ];
 
-  const [tokenSelected, setTokenSelected] = useState("");
   return (
     <div className="">
       <Select.Root
-        value={tokenSelected}
+        value={tokenSelected?.symbol}
         onValueChange={(value) => {
-          setTokenSelected(value);
+          onTokenSelect(
+            tokens.find((token) => token.symbol === value) ?? tokens[0]
+          );
         }}
       >
         <Select.Trigger className="flex items-center justify-center border  rounded-3xl py-1 px-2.5 bg-pink-500 text-white text-lg font-bold">
           <Select.Value>
-            {tokenSelected ? tokenSelected : "Select Token"}
+            {tokenSelected ? tokenSelected.symbol : "Select Token"}
           </Select.Value>
           <Select.Icon>
             <svg
