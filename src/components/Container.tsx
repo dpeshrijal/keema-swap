@@ -16,6 +16,8 @@ const Container: FC = () => {
   const [toTokenValue, setToTokenValue] = useState("");
   const [price, setPrice] = useState<number>();
 
+  const swapDisabled = !fromToken || !toToken || !fromTokenValue;
+
   const handleFromTokenSelection = (value: I_Token) => {
     setFromToken(value);
     getPrice();
@@ -26,7 +28,7 @@ const Container: FC = () => {
   };
 
   const getPrice = async () => {
-    if (!fromToken || !toToken || !fromTokenValue) return;
+    if (swapDisabled) return;
     const amount = Number(fromTokenValue) * 10 ** fromToken.decimal;
 
     try {
@@ -78,7 +80,10 @@ const Container: FC = () => {
             onTokenSelect={handleToTokenSelection}
           />
         </div>
-        <button className="border h-16 rounded-3xl mt-2 bg-gray-200">
+        <button
+          className="border h-16 rounded-3xl mt-2 bg-pink-500 disabled:cursor-not-allowed disabled:bg-pink-100 text-white font-bold disabled:text-gray-500"
+          disabled={swapDisabled}
+        >
           Swap
         </button>
       </div>
