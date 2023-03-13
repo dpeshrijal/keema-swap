@@ -59,11 +59,15 @@ const Container: FC<props> = ({ account }) => {
     const web3 = new Web3(Web3.givenProvider);
     const TokenContract = new web3.eth.Contract(abi as any, fromTokenAddress);
     const maxApproval = new BigNumber("2").pow(25).minus(1);
-    await TokenContract.methods
-      .approve(exchangeData.allowanceTarget, maxApproval)
-      .send({ from: account });
+    try {
+      await TokenContract.methods
+        .approve(exchangeData.allowanceTarget, maxApproval)
+        .send({ from: account });
 
-    await web3.eth.sendTransaction(exchangeData);
+      await web3.eth.sendTransaction(exchangeData);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
