@@ -58,7 +58,8 @@ const Container: FC<props> = ({ account }) => {
     const exchangeData = await getPrice();
     const web3 = new Web3(Web3.givenProvider);
     const TokenContract = new web3.eth.Contract(abi as any, fromTokenAddress);
-    const maxApproval = new BigNumber("2").pow(25).minus(1);
+    const maxApproval = 2 ** 18;
+    console.log(maxApproval);
     try {
       await TokenContract.methods
         .approve(exchangeData.allowanceTarget, maxApproval)
