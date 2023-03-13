@@ -1,6 +1,9 @@
 import { FC, useState, useEffect } from "react";
 import TokenSelector from "./TokenSelector";
 import axios from "axios";
+import { abi } from "@/data/abi";
+import Web3 from "web3";
+import { BigNumber } from "bignumber.js";
 
 export type I_Token = {
   address: string;
@@ -9,14 +12,19 @@ export type I_Token = {
   decimal: number;
 };
 
-const Container: FC = () => {
+type props = {
+  account: string;
+};
+
+const Container: FC<props> = ({ account }) => {
   const [fromToken, setFromToken] = useState<I_Token>();
   const [toToken, setToToken] = useState<I_Token>();
   const [fromTokenValue, setFromTokenValue] = useState("");
   const [toTokenValue, setToTokenValue] = useState("");
   const [price, setPrice] = useState<number>();
 
-  const swapDisabled = !fromToken || !toToken || !fromTokenValue;
+  const swapDisabled =
+    !fromToken || !toToken || !fromTokenValue || account.length === 0;
 
   const handleFromTokenSelection = (value: I_Token) => {
     setFromToken(value);
@@ -33,15 +41,29 @@ const Container: FC = () => {
 
     try {
       const response = await axios.get(
-        `https://api.0x.org/swap/v1/price?sellToken=${fromToken.symbol}&buyToken=${toToken.symbol}&sellAmount=${amount}`
+        `https://api.0x.org/swap/v1/price?sellToken=${fromToken.symbol}&buyToken=${toToken.symbol}&sellAmount=${amount}&takerAddress=${account}`
       );
       const exchangeRate = await response.data.price;
       const buyAmount = await response.data.buyAmount;
       setPrice(Number(exchangeRate));
       setToTokenValue((Number(buyAmount) / 10 ** toToken.decimal).toString());
+      return await response.data;
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const swap = async () => {
+    const fromTokenAddress = fromToken?.address;
+    const exchangeData = await getPrice();
+    const web3 = new Web3(Web3.givenProvider);
+    const TokenContract = new web3.eth.Contract(abi as any, fromTokenAddress);
+    const maxApproval = new BigNumber(2).pow(256).minus(1);
+    await TokenContract.methods
+      .approve(exchangeData.allowanceTarget, maxApproval)
+      .send({ from: account });
+
+    await web3.eth.sendTransaction(exchangeData);
   };
 
   useEffect(() => {
@@ -83,6 +105,7 @@ const Container: FC = () => {
         <button
           className="border h-16 rounded-3xl mt-2 bg-pink-500 disabled:cursor-not-allowed disabled:bg-pink-100 text-white font-bold disabled:text-gray-500"
           disabled={swapDisabled}
+          onClick={swap}
         >
           Swap
         </button>

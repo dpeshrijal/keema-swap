@@ -1,7 +1,11 @@
 import { FC, useState, useEffect } from "react";
 declare const window: any;
 
-const Header: FC = () => {
+type props = {
+  onAccountSelect: (value: string) => void;
+};
+
+const Header: FC<props> = ({ onAccountSelect }) => {
   const [currentAccount, setCurrentAccount] = useState("");
   const [connectText, setConnectText] = useState("Connect");
 
@@ -13,7 +17,7 @@ const Header: FC = () => {
 
       if (accounts.length > 0) {
         const account = accounts[0];
-
+        onAccountSelect(account);
         setCurrentAccount(account);
         setConnectText(account.slice(0, 6) + "..." + account.slice(-4));
       }
@@ -33,6 +37,7 @@ const Header: FC = () => {
         method: "eth_requestAccounts",
       });
       const account = accounts[0];
+      onAccountSelect(account);
       setCurrentAccount(account);
       setConnectText(account.slice(0, 6) + "..." + account.slice(-4));
     } catch (error) {
